@@ -43,11 +43,17 @@ done
 [[ -n "${member_id}" ]] ||
     usage "Please specify the Member ID with -m"
 
-ids=$(jq '.[0].id, .[0].event_chain_id') ||
+ids=$(jq '.[].id, .[].event_chain_id') ||
     die "Failed to get ids."
 
-[[ $(echo "${ids}" | wc -l) -eq 2 ]] ||
-    die "Failed to get ids: 2 expected"
+nb_ids=$(echo "${ids}" | wc -l)
+[[ ${nb_ids} -eq 2 ]] || {
+    if [[ ${nb_ids} -lt 2 ]]; then
+        die "No classes passed in input, nothing to book."
+    else
+        die "Too many classes passed in input: $((nb_ids /2)) classes. Use 'filter-classes' to keep only 1 class."
+    fi
+}
 
 event_id=$(echo "${ids}" | head -n 1)
 event_chain_id=$(echo "${ids}" | tail -n 1)
