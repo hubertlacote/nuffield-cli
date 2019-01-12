@@ -34,4 +34,4 @@ done
 [[ -n "${input_date}" ]] ||
     usage "Please specify the date with -d"
 
-call_api "https://nuffield.bookingbug.com/api/v1/37159/events?start_date=${input_date}&end_date=${input_date}&per_page=600&embed=person&include_non_bookable=${include_non_bookable}" | jq '._embedded.events | map( { (.id|tostring): {id, datetime, description, duration, num_spaces, spaces_booked, spaces_wait, bookable} }) | add' | less
+call_api "https://nuffield.bookingbug.com/api/v1/37159/events?start_date=${input_date}&end_date=${input_date}&per_page=600&embed=person&include_non_bookable=${include_non_bookable}" | jq '._embedded.events | map( { (.id|tostring): {id, event_chain_id, datetime, description, duration, num_spaces, spaces_booked, spaces_wait, bookable} }) | add | [.[]]' | less
