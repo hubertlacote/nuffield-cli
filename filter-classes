@@ -1,0 +1,52 @@
+#! /bin/bash
+
+##
+#/
+#/ @PROGRAM@ can be used to filter a list of Nuffield Health classes
+#/ obtained using list-available-classes.
+#/
+#/ Usage:
+#/
+#/ list-available-classes | @PROGRAM@ [OPTIONS]
+#/
+#/ OPTIONS:
+#/
+#/     -d <description_filter> Filter using the description specified.
+#/
+#/ Example:
+#/
+#/     list-available-classes -d "2019-01-12" | @PROGRAM@ -d "BODYATTACK"
+#/
+##
+
+where_am_i="${0%/*}"
+source "${where_am_i}/common"
+
+jq_filters=""
+addFilter() {
+    [[ -z "${jq_filters}" ]] || jq_filters+=" and "
+    filter_name="${1}"
+    filter_value="${2}"
+    jq_filters+="(.${filter_name} | match(\"${filter_value}\"))"
+}
+
+description_filter=""
+while getopts "d:h" option_name; do
+    case $option_name in
+        d) description_filter="${OPTARG:-}";;
+        h) usage;;
+    esac
+done
+
+[[ -z "${description_filter}" ]] ||
+    addFilter "description" "${description_filter}"
+
+[[ -n "${jq_filters}" ]] ||
+    usage "No filter specified."
+
+result=$(jq "[.[] | select(${jq_filters})]")
+
+[[ "${result}" != "[]" ]] ||
+    die "No classes matching the specified filters: '${jq_filters}'."
+
+echo "${result}"
