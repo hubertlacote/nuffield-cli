@@ -11,11 +11,14 @@
 #/
 #/ OPTIONS:
 #/
-#/     -d <description_filter> Filter using the description specified.
+#/     -n <name_filter> Filter using the name of the class.
+#/     -t <time_filter> Filter using the description specified.
 #/
-#/ Example:
+#/ Examples:
 #/
-#/     list-classes -d "2019-01-12" | @PROGRAM@ -d "BODYATTACK"
+#/     list-classes -d "2019-01-12" | @PROGRAM@ -n "BODYATTACK"
+#/     list-classes -d "2019-01-12" | @PROGRAM@ -n "YOGA" -t "06:35"
+#/     list-classes -d "2019-01-12" | @PROGRAM@ -t "06:35"
 #/
 ##
 
@@ -30,16 +33,20 @@ addFilter() {
     jq_filters+="(.${filter_name} | match(\"${filter_value}\"))"
 }
 
-description_filter=""
-while getopts "d:h" option_name; do
+name_filter=""
+time_filter=""
+while getopts "n:t:h" option_name; do
     case $option_name in
-        d) description_filter="${OPTARG:-}";;
+        n) name_filter="${OPTARG:-}";;
+        t) time_filter="${OPTARG:-}";;
         h) usage;;
     esac
 done
 
-[[ -z "${description_filter}" ]] ||
-    addFilter "description" "${description_filter}"
+[[ -z "${name_filter}" ]] ||
+    addFilter "description" "${name_filter}"
+[[ -z "${time_filter}" ]] ||
+    addFilter "datetime" "${time_filter}"
 
 [[ -n "${jq_filters}" ]] ||
     usage "No filter specified."
