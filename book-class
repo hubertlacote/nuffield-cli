@@ -1,0 +1,62 @@
+#! /bin/bash
+
+##
+#/
+#/ @PROGRAM@ can be used to book the first class appearing on a JSON list of classes
+#/ returned by list-classes.
+#/
+#/ Usage:
+#/
+#/ ./list-classes -a <auth_token> -m <member_id> | @PROGRAM@
+#/
+#/ OPTIONS:
+#/
+#/     -a <auth_token> Auth-Token to use
+#/     -m <member_id> Member ID to use
+#/
+#/ To get the Auth-Token and Member id:
+#/ - Open Network Activity panel in Google Chrome (Ctrl + Shift + I), select XHR,
+#/ - Login to Nuffield Health website (https://www.nuffieldhealth.com/account/homepage) and possibly book a class,
+#/ - Follow the instructions on https://developers.google.com/web/updates/2015/05/replay-a-network-request-in-curl
+#/
+#/ Example:
+#/
+#/     ./list-classes -d "2019-01-01" -b | ./filter-classes -d "YOGA" | @PROGRAM@ -a "AnUjfgrTyuihfTgjklMkdd" -m 123456
+#/
+##
+
+where_am_i="${0%/*}"
+source "${where_am_i}/common"
+
+auth_token=""
+member_id=""
+while getopts "a:m:h" option_name; do
+    case $option_name in
+        a) auth_token="${OPTARG:-}";;
+        m) member_id="${OPTARG:-}";;
+        h) usage;;
+    esac
+done
+
+[[ -n "${auth_token}" ]] ||
+    usage "Please specify the Auth-Token with -a"
+[[ -n "${member_id}" ]] ||
+    usage "Please specify the Member ID with -m"
+
+ids=$(jq '.[0].id, .[0].event_chain_id') ||
+    die "Failed to get ids."
+
+[[ $(echo "${ids}" | wc -l) -eq 2 ]] ||
+    die "Failed to get ids: 2 expected"
+
+event_id=$(echo "${ids}" | head -n 1)
+event_chain_id=$(echo "${ids}" | tail -n 1)
+
+[[ -n "${event_id}" ]] ||
+    die "Failed to extract event_id."
+[[ -n "${event_chain_id}" ]] ||
+    die "Failed to extract event_chain_id."
+
+curl -s 'https://nuffield.bookingbug.com/api/v1/37159/basket/add_item' -H 'Origin: https://www.nuffieldhealth.com' -H 'App-Key: f0bc4f65f4fbfe7b4b3b7264b655f5eb' -H 'Accept-Language: en-GB,en;q=0.9,en-US;q=0.8,fr;q=0.7' -H 'App-Id: f6b16c23' -H 'Accept-Encoding: gzip, deflate, br' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Content-Type: application/json' -H "Auth-Token: ${auth_token}" -H 'Accept: application/hal+json,application/json' -H 'Cache-Control: no-cache' --data-binary '{"entire_basket":true,"items":[{"event_id":'${event_id}',"event_chain_id":'${event_chain_id}',"member_id":'${member_id}'}]}' --compressed | jq '.'
+
+curl -s 'https://nuffield.bookingbug.com/api/v1/37159/basket/checkout' -H 'Origin: https://www.nuffieldhealth.com' -H 'App-Key: f0bc4f65f4fbfe7b4b3b7264b655f5eb' -H 'Accept-Language: en-GB,en;q=0.9,en-US;q=0.8,fr;q=0.7' -H 'App-Id: f6b16c23' -H 'Accept-Encoding: gzip, deflate, br' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Content-Type: application/json' -H "Auth-Token: ${auth_token}" -H 'Accept: application/hal+json,application/json' -H 'Cache-Control: no-cache' --data-binary '{"client":{"id":'${member_id}'}}' --compressed | jq '.'
