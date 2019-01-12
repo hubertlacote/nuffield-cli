@@ -3,11 +3,11 @@
 ##
 #/
 #/ @PROGRAM@ can be used to filter a list of Nuffield Health classes
-#/ obtained using list-available-classes.
+#/ obtained using list-classes.
 #/
 #/ Usage:
 #/
-#/ list-available-classes | @PROGRAM@ [OPTIONS]
+#/ list-classes | @PROGRAM@ [OPTIONS]
 #/
 #/ OPTIONS:
 #/
@@ -15,7 +15,7 @@
 #/
 #/ Example:
 #/
-#/     list-available-classes -d "2019-01-12" | @PROGRAM@ -d "BODYATTACK"
+#/     list-classes -d "2019-01-12" | @PROGRAM@ -d "BODYATTACK"
 #/
 ##
 
