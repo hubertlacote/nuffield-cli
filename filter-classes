@@ -16,9 +16,9 @@
 #/
 #/ Examples:
 #/
-#/     list-classes -d "2019-01-12" | @PROGRAM@ -n "BODYATTACK"
-#/     list-classes -d "2019-01-12" | @PROGRAM@ -n "YOGA" -t "06:35"
-#/     list-classes -d "2019-01-12" | @PROGRAM@ -t "06:35"
+#/     list-classes -g 1234 -d "2019-01-12" | @PROGRAM@ -n "BODYATTACK"
+#/     list-classes -g 1234 -d "2019-01-12" | @PROGRAM@ -n "YOGA" -t "06:35"
+#/     list-classes -g 1234 -d "2019-01-12" | @PROGRAM@ -t "06:35"
 #/
 ##
 

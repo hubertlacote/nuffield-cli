@@ -6,15 +6,18 @@
 #/
 #/ Usage:
 #/
-#/ @PROGRAM@ -d <date> [OPTIONS]
+#/ @PROGRAM@ -g <gym_id> -d <date> [OPTIONS]
+#/
+#/      -g <gym_id> The ID of the gym (see README.md)
+#/      -g <date>   The date for when you want to list classes (format: yyyy-mm-dd)
 #/
 #/ OPTIONS:
 #/
-#/     -b   include only bookable classes
+#/     -b           include only bookable classes
 #/
 #/ Example:
 #/
-#/     @PROGRAM@ -d "2019-01-13"
+#/     @PROGRAM@ -g 1234 -d "2019-01-13"
 #/
 ##
 
@@ -22,10 +25,12 @@ where_am_i="${0%/*}"
 source "${where_am_i}/common"
 
 input_date=""
+gym_id=""
 include_non_bookable="true"
-while getopts "bd:h" option_name; do
+while getopts "bg:d:h" option_name; do
     case $option_name in
         d) input_date="${OPTARG:-}";;
+        g) gym_id="${OPTARG:-}";;
         b) include_non_bookable="false";;
         h) usage;;
     esac
@@ -33,5 +38,7 @@ done
 
 [[ -n "${input_date}" ]] ||
     usage "Please specify the date with -d"
+[[ -n "${gym_id}" ]] ||
+    usage "Please specify your gym id with -g"
 
-call_api "https://nuffield.bookingbug.com/api/v1/37159/events?start_date=${input_date}&end_date=${input_date}&per_page=600&embed=person&include_non_bookable=${include_non_bookable}" | jq '._embedded.events | map( { (.id|tostring): {id, event_chain_id, datetime, description, duration, num_spaces, spaces_booked, spaces_wait, bookable} }) | add | [.[]]' | less
+call_api "https://nuffield.bookingbug.com/api/v1/${gym_id}/events?start_date=${input_date}&end_date=${input_date}&per_page=600&embed=person&include_non_bookable=${include_non_bookable}" | jq '._embedded.events | map( { (.id|tostring): {id, event_chain_id, datetime, description, duration, num_spaces, spaces_booked, spaces_wait, bookable} }) | add | [.[]]' | less

@@ -18,19 +18,23 @@ With nuffield-cli:
 
 ## Configuration
 
-You need to log in to Nuffield Health in Google Chrome and extract your member id and Auth-Token:
+You need to find your gym id, your member id and your Auth-Token (it will expire regularly, so you will have to repeat this procedure regularly):
 
+- Login to Nuffield Health website in Google Chrome (https://www.nuffieldhealth.com/account/homepage),
 - Open Network Activity panel in Google Chrome (Ctrl + Shift + I or F12), select XHR,
-- Login to Nuffield Health website (https://www.nuffieldhealth.com/account/homepage) and possibly book a class,
-- Follow the instructions on https://developers.google.com/web/updates/2015/05/replay-a-network-request-in-curl
+- Book a class and find the XHR request to 'checkout' using Network Activity Panel,
+- Copy as cURL (see instructions on https://developers.google.com/web/updates/2015/05/replay-a-network-request-in-curl),
+- You should have something like this in your clipboard containing everything you need:
 
-The Auth-Token expires so you will have to repeat the procedure.
+```bash
+# Check what you have in place of YOUR_GYM_ID_HERE / YOUR_MEMBER_ID / YOUR_AUTH_TOKEN_HERE:
+curl 'https://nuffield.bookingbug.com/api/v1/YOUR_GYM_ID_HERE/basket/checkout' -H 'Origin: https://www.nuffieldhealth.com' -H 'App-Key: f0bc4f65f4fbfe7b4b3b7264b655f5eb' -H 'Accept-Language: en-GB,en;q=0.9,en-US;q=0.8,fr;q=0.7' -H 'App-Id: f6b16c23' -H 'Accept-Encoding: gzip, deflate, br' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Content-Type: application/json' -H 'Auth-Token: YOUR_AUTH_TOKEN_HERE' -H 'Accept: application/hal+json,application/json' -H 'Cache-Control: no-cache' -H 'Referer: https://www.nuffieldhealth.com/gyms/city/timetable' -H 'DNT: 1' --data-binary '{"client":{"id":YOUR_MEMBER_ID}}' --compressed
+```
 
 ## Requirements
 
-- Install jq (Command-line JSON processor)
-
 ```bash
+# Install jq (Command-line JSON processor)
 sudo apt install jq
 ```
 
@@ -38,11 +42,11 @@ sudo apt install jq
 
 ```bash
 # List all the classes available to book on 01/01/2019
-./list-classes -d "2019-01-01" -b
+./list-classes -g 1234 -d "2019-01-01" -b
 
 # Book the Yoga class at 06:35 on 01/01/2019
-./list-classes -d "2019-01-01" -b | ./filter-classes -n "YOGA" -t "06:35" | ./filter-classes -a "AnUjfgrTyuihfTgjklMkdd" -m 123456
+./list-classes -g 1234 -d "2019-01-01" -b | ./filter-classes -n "YOGA" -t "06:35" | ./book-class -a "AnUjfgrTyuihfTgjklMkdd" -g 1234 -m 123456
 
 # Book any Yoga class on 01/01/2019
-./list-classes -d "2019-01-01" -b | ./filter-classes -n "YOGA" | ./filter-classes -a "AnUjfgrTyuihfTgjklMkdd" -m 123456
+./list-classes -g 1234 -d "2019-01-01" -b | ./filter-classes -n "YOGA" | ./book-class -a "AnUjfgrTyuihfTgjklMkdd" -g 1234 -m 123456
 ```
