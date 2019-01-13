@@ -40,6 +40,14 @@ curl 'https://nuffield.bookingbug.com/api/v1/YOUR_GYM_ID_HERE/basket/checkout' -
 sudo apt install jq
 ```
 
+- Instructions for Mac OSX:
+
+Using Homebrew (For details about installing homebrew, see http://brew.sh):
+
+```bash
+brew install jq
+```
+
 ## Usage
 
 A sample script is provided: [book-my-classes](book-my-classes):
