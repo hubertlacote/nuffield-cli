@@ -6,13 +6,25 @@ set -e
 where_am_i="${0%/*}"
 script_name=${0##*/}
 
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NO_COLOUR='\033[0m'
+
+info() {
+    echo -e "${BLUE}${script_name}: Info: ${1:-}${NO_COLOUR}"
+}
+
+error() {
+    echo -e "${RED}${script_name}: Error: ${1:-}${NO_COLOUR}" >&2
+}
+
 die() {
-    echo -e "${script_name} - Error: ${1:-}" >&2
+    error "${1:-}"
     exit 1
 }
 
 usage() {
-    [[ -z "${1:-}" ]] || echo -e "Error: ${1}\n" >&2
+    [[ -z "${1:-}" ]] || error "${1:-}"
     grep '^#/' $0 | cut -c 4- | sed \
         -e "s/@PROGRAM@/${script_name}/g" >&2
     exit 1;
@@ -38,7 +50,7 @@ book_class() {
     local class_name="${2}"
     local class_time="${3}"
     local readable_date=$(human_readable_date "${d}" "${class_time}")
-    echo "Booking ${class_name} on ${readable_date}..."
+    info "Booking ${class_name} on ${readable_date}..."
     ${where_am_i}/list-classes -g ${GYM_ID} -d "${d}" -b | \
         ${where_am_i}/filter-classes -n "${class_name}" -t "${class_time}" | \
             ${where_am_i}/book-class -a "${AUTH_TOKEN}" -g ${GYM_ID} -m ${MEMBER_ID}
