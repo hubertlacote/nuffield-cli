@@ -1,0 +1,38 @@
+#! /bin/bash
+
+##
+#/
+#/ Usage:
+#/
+#/ @PROGRAM@ -s <start_date>
+#/
+#/      -s <start_date> Initial date (e.g. Monday in 2 weeks)
+#/
+#/ Example:
+#/
+#/     @PROGRAM@ -s "2019-01-21"
+#/
+
+# TODO: Replace with your ids
+GYM_ID="1234"
+AUTH_TOKEN="AnUjfgrTyuihfTgjklMkdd"
+MEMBER_ID="123456"
+
+where_am_i="${0%/*}"
+source "${where_am_i}/common"
+
+start_date=""
+while getopts "s:h" option_name; do
+    case $option_name in
+        s) start_date="${OPTARG:-}";;
+        h) usage;;
+    esac
+done
+
+[[ -n "${start_date}" ]] ||
+    usage "Please specify the start date with -s"
+
+# TODO: Replace with your classes
+book_class "${start_date} + 2 days" "YOGA" "10:45"
+book_class "${start_date} + 3 days" "WORKOUT" "11:45"
+book_class "${start_date} + 9 days" "AQUA" "08:00"

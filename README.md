@@ -40,7 +40,21 @@ sudo apt install jq
 
 ## Usage
 
+A sample script is provided: `book-my-classes`, edit it with your ids and with the classes you want to book and execute it every 2 weeks:
+
 ```bash
+# Edit the script book-my-classes and then execute:
+./book-my-classes -s "2019-01-21"
+```
+
+Or feel free to use directly the command line tools:
+
+```bash
+# Print usage
+./list-classes -h
+./filter-classes -h
+./book-class -h
+
 # List all the classes available to book on 01/01/2019
 ./list-classes -g 1234 -d "2019-01-01" -b
 

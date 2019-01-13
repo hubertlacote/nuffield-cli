@@ -3,6 +3,7 @@
 set -u
 set -e
 
+where_am_i="${0%/*}"
 script_name=${0##*/}
 
 die() {
@@ -19,4 +20,26 @@ usage() {
 
 call_api() {
   curl -s $@ -H 'Pragma: no-cache' -H 'App-Key: f0bc4f65f4fbfe7b4b3b7264b655f5eb' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: en-GB,en;q=0.9,en-US;q=0.8,fr;q=0.7' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Accept: application/hal+json,application/json' -H 'Cache-Control: no-cache' -H 'App-Id: f6b16c23' -H 'Connection: keep-alive' --compressed
+}
+
+format_date() {
+    local d="${1}"
+    date "+%Y%m%d" -d "${d}"
+}
+
+human_readable_date() {
+    local d="${1}"
+    local time="${2}"
+    date "+%c" -d "${1} ${2}"
+}
+
+book_class() {
+    local d=$(format_date "${1}")
+    local class_name="${2}"
+    local class_time="${3}"
+    local readable_date=$(human_readable_date "${d}" "${class_time}")
+    echo "Booking ${class_name} on ${readable_date}..."
+    ${where_am_i}/list-classes -g ${GYM_ID} -d "${d}" -b | \
+        ${where_am_i}/filter-classes -n "${class_name}" -t "${class_time}" | \
+            ${where_am_i}/book-class -a "${AUTH_TOKEN}" -g ${GYM_ID} -m ${MEMBER_ID}
 }
