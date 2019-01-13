@@ -4,7 +4,7 @@
 
 ## Why ([![start with why](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)](http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action))
 
-With Nuffield Health booking system (https://www.nuffieldhealth.com/account/homepage), you usually have to book 8 days in advance at 7 am to be sure to have space in your class.
+With Nuffield Health booking system (https://www.nuffieldhealth.com/account/homepage), you usually have to book 8 days in advance at 7 am to be sure to have space in your classes.
 
 It is not ideal since:
 
@@ -33,6 +33,8 @@ curl 'https://nuffield.bookingbug.com/api/v1/YOUR_GYM_ID_HERE/basket/checkout' -
 
 ## Requirements
 
+- Instructions for Ubuntu:
+
 ```bash
 # Install jq (Command-line JSON processor)
 sudo apt install jq
@@ -40,11 +42,17 @@ sudo apt install jq
 
 ## Usage
 
-A sample script is provided: `book-my-classes`, edit it with your ids and with the classes you want to book and execute it every 2 weeks:
+A sample script is provided: [book-my-classes](book-my-classes):
 
 ```bash
+# Edit the script with your ids and with the classes that you want to book and execute it every 2 weeks
+vi book-my-classes
+
 # Edit the script book-my-classes and then execute:
 ./book-my-classes -s "2019-01-21"
+
+# Or specify another date, e.g. Monday in 2 weeks (Next Monday + 1 week):
+./book-my-classes -s "Monday + 1 week"
 ```
 
 Or feel free to use directly the command line tools:

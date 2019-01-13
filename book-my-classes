@@ -6,11 +6,16 @@
 #/
 #/ @PROGRAM@ -s <start_date>
 #/
-#/      -s <start_date> Initial date (e.g. Monday in 2 weeks)
+#/      -s <start_date> Initial date
 #/
 #/ Example:
 #/
+#/     # Exact starting date
 #/     @PROGRAM@ -s "2019-01-21"
+#/
+#/     # Monday in 2 weeks (Next Monday + 1 week):
+#/     @PROGRAM@ -s "Monday + 1 week"
+#/
 #/
 
 # TODO: Replace with your ids
