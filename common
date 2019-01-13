@@ -43,3 +43,6 @@ book_class() {
         ${where_am_i}/filter-classes -n "${class_name}" -t "${class_time}" | \
             ${where_am_i}/book-class -a "${AUTH_TOKEN}" -g ${GYM_ID} -m ${MEMBER_ID}
 }
+
+hash jq &>/dev/null ||
+    die "Please install jq."
