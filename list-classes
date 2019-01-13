@@ -9,7 +9,7 @@
 #/ @PROGRAM@ -g <gym_id> -d <date> [OPTIONS]
 #/
 #/      -g <gym_id> The ID of the gym (see README.md)
-#/      -g <date>   The date for when you want to list classes (format: yyyy-mm-dd)
+#/      -d <date>   The date for when you want to list classes (format: yyyy-mm-dd)
 #/
 #/ OPTIONS:
 #/
